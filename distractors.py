@@ -9,7 +9,7 @@ import sys
 import time
 
 # external lib imports
-import numpy as np
+# import numpy as np
 import pygame
 
 # event type constants
@@ -35,29 +35,61 @@ WINDOW = None
 FONT = None
 MSG = ''
 
-ORDER = range(3,10)
-random.shuffle(ORDER)
+ORDER = []
+MAX_LEN = 4
+
+DIST_TEXT = 1
+DIST_RECT = 2
+
+DISTRACTOR_DESCRIPTIONS = {
+    0: 'No Distractor',
+    DIST_TEXT: 'Text Distractor',
+    DIST_RECT: 'Rect Distractor'
+}
+
+DISTRACTOR = 0
 
 outputfile = open('data.csv', 'w')
-outputfile.write('expected, entered, time, success\n')
+outputfile.write('expected, entered, time, distractor type, success\n')
 
 def draw_text(t=None):
+    length = 0
     if t is None:
         length = ORDER.pop()
-        text = ''.join([chr(random.randint(65,90)) for _ in range(length)])
+        text = genRandString(length)
+        distractor(DISTRACTOR, length)
     else:
         text = t
+    print DISTRACTOR
     text_obj = FONT.render(text, True, pygame.Color('#000000'))
     pos = text_obj.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
     WINDOW.blit(text_obj, pos)
     return text
+
+def genRandString(l):
+    return ''.join([chr(random.randint(65,90)) for _ in range(l)])
+
+def distractor(t, l=0):
+    if t is None:
+        return
+    elif t == DIST_TEXT:
+        text = genRandString(l)
+        text_obj = FONT.render(text, True, pygame.Color('#000000'))
+        text_pos = text_obj.get_rect()
+        pos = (0, WINDOW_HEIGHT/2 - text_pos.height/2)
+        WINDOW.blit(text_obj, pos)
+    elif t == DIST_RECT:
+        height = 50
+        width = 150
+        top = WINDOW_HEIGHT/2 - (height/2)
+        WINDOW.fill(color=pygame.Color('#00FF00'), rect=pygame.Rect(0, top, width, height))
 
 def clear_window():
     WINDOW.fill(color=pygame.Color('white'))
 
 def check_text(time, expected_text):
     entered = INPUT_BOX.value.upper()
-    outputfile.write('%s,%s,%s,%s\n' % (expected_text, entered, time, entered==expected_text))
+    outputfile.write('%s,%s,%s,%s,%s\n' % (expected_text, entered, time, DISTRACTOR_DESCRIPTIONS[DISTRACTOR], entered==expected_text))
     INPUT_BOX.value = ''
 
 def init():
@@ -70,9 +102,15 @@ def init():
     FONT = pygame.font.SysFont('Arial', size=72)
 
     INPUT_BOX = eztext.Input(maxlength=9, font=FONT, prompt='enter the text: ')
+    init_ordering()
 
+def init_ordering():
+    global ORDER
+    ORDER = range(3, MAX_LEN+1)
+    random.shuffle(ORDER)
 
 def main():
+    global ORDER, DISTRACTOR
     init()
     set_timer = False
     draw_box = False
@@ -87,7 +125,10 @@ def main():
         if set_timer:
             # 3 - 5 seconds
             if len(ORDER) == 0:
-                quit()
+                DISTRACTOR += 1
+                init_ordering()
+                if DISTRACTOR not in DISTRACTOR_DESCRIPTIONS:
+                    quit()
             time_to_text = random.randint(3000, 5000)
             time_to_clear = time_to_text + TIME_TO_SHOW
             pygame.time.set_timer(TEXT_TIMER_EVENT, time_to_text)
