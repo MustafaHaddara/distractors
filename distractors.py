@@ -24,6 +24,11 @@ import eztext
 
 WINDOW_HEIGHT = 900
 WINDOW_WIDTH = 1440
+WINDOW_MODE = 0
+
+TEXT_COLOR = '#000000'
+BACK_COLOR = '#DDDDDD'
+DIST_COLOR = '#00FF00'
 
 TIME_TO_SHOW = 1000
 
@@ -36,7 +41,7 @@ FONT = None
 MSG = ''
 
 ORDER = []
-MAX_LEN = 4
+MAX_LEN = 9
 
 DIST_TEXT = 1
 DIST_RECT = 2
@@ -49,8 +54,7 @@ DISTRACTOR_DESCRIPTIONS = {
 
 DISTRACTOR = 0
 
-outputfile = open('data.csv', 'w')
-outputfile.write('expected, entered, time, distractor type, success\n')
+FILENAME = 'data.csv'
 
 def draw_text(t=None):
     length = 0
@@ -60,8 +64,7 @@ def draw_text(t=None):
         distractor(DISTRACTOR, length)
     else:
         text = t
-    print DISTRACTOR
-    text_obj = FONT.render(text, True, pygame.Color('#000000'))
+    text_obj = FONT.render(text, True, pygame.Color(TEXT_COLOR))
     pos = text_obj.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
     WINDOW.blit(text_obj, pos)
     return text
@@ -74,7 +77,7 @@ def distractor(t, l=0):
         return
     elif t == DIST_TEXT:
         text = genRandString(l)
-        text_obj = FONT.render(text, True, pygame.Color('#000000'))
+        text_obj = FONT.render(text, True, pygame.Color(TEXT_COLOR))
         text_pos = text_obj.get_rect()
         pos = (0, WINDOW_HEIGHT/2 - text_pos.height/2)
         WINDOW.blit(text_obj, pos)
@@ -82,27 +85,39 @@ def distractor(t, l=0):
         height = 50
         width = 150
         top = WINDOW_HEIGHT/2 - (height/2)
-        WINDOW.fill(color=pygame.Color('#00FF00'), rect=pygame.Rect(0, top, width, height))
+        WINDOW.fill(color=pygame.Color(DIST_COLOR), rect=pygame.Rect(0, top, width, height))
 
 def clear_window():
-    WINDOW.fill(color=pygame.Color('white'))
+    WINDOW.fill(color=pygame.Color(BACK_COLOR))
 
 def check_text(time, expected_text):
     entered = INPUT_BOX.value.upper()
-    outputfile.write('%s,%s,%s,%s,%s\n' % (expected_text, entered, time, DISTRACTOR_DESCRIPTIONS[DISTRACTOR], entered==expected_text))
+    OUTPUTFILE.write('%s,%s,%s,%s,%s\n' % (expected_text, entered, time, DISTRACTOR_DESCRIPTIONS[DISTRACTOR], entered==expected_text))
     INPUT_BOX.value = ''
 
 def init():
-    global WINDOW, FONT, INPUT_BOX
-    WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    global WINDOW, FONT, INPUT_BOX, WINDOW_MODE, OUTPUTFILE
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--full':
+            WINDOW_MODE = pygame.FULLSCREEN
+            if len(sys.argv) > 2:
+                FILENAME = sys.argv[2] + '.csv'
+        else:
+            FILENAME = sys.argv[1] + '.csv'
+
+    WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_MODE)
     pygame.display.set_caption('Distractors')
     pygame.init()    
-    WINDOW.fill(color=pygame.Color('white'))
+    WINDOW.fill(color=pygame.Color(BACK_COLOR))
 
     FONT = pygame.font.SysFont('Arial', size=72)
 
     INPUT_BOX = eztext.Input(maxlength=9, font=FONT, prompt='enter the text: ')
+    INPUT_BOX.shifted = True
     init_ordering()
+
+    OUTPUTFILE = open(FILENAME, 'w')
+    OUTPUTFILE.write('expected, entered, time, distractor type, success\n')
 
 def init_ordering():
     global ORDER
@@ -166,6 +181,7 @@ def main():
         INPUT_BOX.update(events)
 
         if draw_box:
+            clear_window()
             INPUT_BOX.draw(WINDOW)
 
         pygame.display.flip()
@@ -173,7 +189,7 @@ def main():
 
 
 def quit():
-    outputfile.close()
+    OUTPUTFILE.close()
     pygame.quit()
     sys.exit()
 
