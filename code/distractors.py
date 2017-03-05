@@ -54,7 +54,7 @@ DISTRACTOR_DESCRIPTIONS = {
 
 DISTRACTOR = 0
 
-FILENAME = 'data.csv'
+DEFAULT_FILENAME = 'data.csv'
 
 def draw_text(t=None):
     length = 0
@@ -101,9 +101,11 @@ def init():
         if sys.argv[1] == '--full':
             WINDOW_MODE = pygame.FULLSCREEN
             if len(sys.argv) > 2:
-                FILENAME = sys.argv[2] + '.csv'
+                fname = sys.argv[2] + '.csv'
+            else:
+                fname = DEFAULT_FILENAME
         else:
-            FILENAME = sys.argv[1] + '.csv'
+            fname = sys.argv[1] + '.csv'
 
     WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_MODE)
     pygame.display.set_caption('Distractors')
@@ -116,7 +118,7 @@ def init():
     INPUT_BOX.shifted = True
     init_ordering()
 
-    OUTPUTFILE = open(FILENAME, 'w')
+    OUTPUTFILE = open(fname, 'w')
     OUTPUTFILE.write('expected, entered, time, distractor type, success\n')
 
 def init_ordering():
