@@ -1,0 +1,6 @@
+subject sat 34-36 inches away from screen
+
+screen 18 15/16 inches wide, 10 11/16 inches tall
+
+letters 7/16 inches high, width varies by letter (font not monospace)
+    fontsize listed as 72pt
