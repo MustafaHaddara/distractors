@@ -59,9 +59,9 @@ DEFAULT_FILENAME = 'data.csv'
 def draw_text(t=None):
     length = 0
     if t is None:
-        length = ORDER.pop()
+        length,d = ORDER.pop()
         text = genRandString(length)
-        distractor(DISTRACTOR, length)
+        distractor(d, length)
     else:
         text = t
     text_obj = FONT.render(text, True, pygame.Color(TEXT_COLOR))
@@ -118,12 +118,14 @@ def init():
     INPUT_BOX.shifted = True
     init_ordering()
 
-    OUTPUTFILE = open(fname, 'w')
+    OUTPUTFILE = open('../experimental-data/' + fname, 'w')
     OUTPUTFILE.write('expected, entered, time, distractor type, success\n')
 
 def init_ordering():
     global ORDER
-    ORDER = range(3, MAX_LEN+1)
+    for i in range(3, MAX_LEN+1):
+        for j in DISTRACTOR_DESCRIPTIONS:
+            ORDER.append( (i,j) )
     random.shuffle(ORDER)
 
 def main():
@@ -142,10 +144,7 @@ def main():
         if set_timer:
             # 3 - 5 seconds
             if len(ORDER) == 0:
-                DISTRACTOR += 1
-                init_ordering()
-                if DISTRACTOR not in DISTRACTOR_DESCRIPTIONS:
-                    quit()
+                quit()
             time_to_text = random.randint(3000, 5000)
             time_to_clear = time_to_text + TIME_TO_SHOW
             pygame.time.set_timer(TEXT_TIMER_EVENT, time_to_text)
