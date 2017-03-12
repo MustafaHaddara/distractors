@@ -57,11 +57,12 @@ DISTRACTOR = 0
 DEFAULT_FILENAME = 'data.csv'
 
 def draw_text(t=None):
+    global DISTRACTOR
     length = 0
     if t is None:
-        length,d = ORDER.pop()
+        length,DISTRACTOR = ORDER.pop()
         text = genRandString(length)
-        distractor(d, length)
+        distractor(DISTRACTOR, length)
     else:
         text = t
     text_obj = FONT.render(text, True, pygame.Color(TEXT_COLOR))
