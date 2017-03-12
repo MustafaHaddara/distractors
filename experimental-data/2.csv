@@ -1,0 +1,22 @@
+expected, entered, time, distractor type, success
+JOFBIL,JOEL ,15904,Text Distractor,False
+OPMFM,OPFM,5654,No Distractor,False
+OQOUAD,OQOUD,4522,No Distractor,False
+QUCLBFDYD,QUVCLB,7927,Text Distractor,False
+CFYEQXYF,CFYEQ,6660,Rect Distractor,False
+REBJ,REBJ,3954,Rect Distractor,True
+VUHBFUOEV,VUHBH,5692,Rect Distractor,False
+LIMCY,LIMCY,4122,Text Distractor,True
+QOU,QOU,2643,Rect Distractor,True
+ZQS,ZQS,3205,No Distractor,True
+TXBJEMY,TEQJEMY,6111,No Distractor,False
+BNIFMJWK,BNFIMJ,5509,No Distractor,False
+WKIIZT,WKIIZT,7496,Rect Distractor,True
+URHA,URHA,2721,Text Distractor,True
+KCYUEIR,KECUY,4976,Rect Distractor,False
+JKB,JKB,2800,Text Distractor,True
+SQCYNAC,SQANYC,5111,Text Distractor,False
+OUSAUDUS,AUSDDS,3536,Text Distractor,False
+TPRBNQMCN,TRBN,3486,No Distractor,False
+NOBK,NOBK,3403,No Distractor,True
+CWQTK,CWQTKB,7209,Rect Distractor,False
